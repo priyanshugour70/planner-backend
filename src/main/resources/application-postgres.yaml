@@ -1,0 +1,14 @@
+# Supabase Shared Pooler (transaction mode, IPv4). Direct db.* host is optional via SUPABASE_JDBC_URL override.
+# prepareThreshold=0: required for PgBouncer transaction pooling (avoids prepared-statement errors).
+spring:
+  datasource:
+    url: ${SUPABASE_JDBC_URL:jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0}
+    username: ${SUPABASE_DB_USER:postgres.ayxaottfnzoshqhjdezs}
+    password: ${SUPABASE_DB_PASSWORD:Priyanshu123}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 8
+      connection-timeout: 30000
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect

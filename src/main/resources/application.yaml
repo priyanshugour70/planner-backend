@@ -7,18 +7,9 @@ spring:
   application:
     name: planner-backend
 
-  # AUTO_SERVER=TRUE: DevTools / second JVM can share this file (H2 embedded TCP).
-  # Note: cannot combine AUTO_SERVER with DB_CLOSE_ON_EXIT=FALSE on H2 2.3+.
-  datasource:
-    url: jdbc:h2:file:./data/plannerdb;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+  # Default: Supabase PostgreSQL (postgres) + optional local secrets (local). Tests use profile "test" only.
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:postgres,local}
 
   jpa:
     hibernate:
@@ -32,7 +23,7 @@ spring:
           time_zone: Asia/Kolkata
         order_inserts: true
         order_updates: true
-    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: false
 
   flyway:
     enabled: false
@@ -43,8 +34,8 @@ spring:
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
+    username: ${MAIL_USERNAME:priyanshugour1@gmail.com}
+    password: ${MAIL_PASSWORD:aymx newu phks wudr}
     properties:
       mail:
         smtp:

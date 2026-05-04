@@ -1,36 +1,18 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    url: jdbc:h2:mem:planner_test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
     username: sa
     password:
     driver-class-name: org.h2.Driver
-
-  h2:
-    console:
-      enabled: false
 
   jpa:
     hibernate:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.H2Dialect
 
-  cache:
-    type: simple
+  flyway:
+    enabled: false
 
-  mail:
-    host: localhost
-    port: 25
-
-app:
-  timezone: Asia/Kolkata
-  jwt:
-    secret: testSecretKeyForJWTTokenGeneration2024SecureRandomString
-    access-token-expiry: 86400000
-    refresh-token-expiry: 604800000
-  cors:
-    allowed-origins: http://localhost:3000
-
-logging:
-  level:
-    root: WARN
-    com.planner: DEBUG
+  h2:
+    console:
+      enabled: false

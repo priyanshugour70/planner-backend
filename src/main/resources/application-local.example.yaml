@@ -1,0 +1,4 @@
+# Copy to application-local.yaml (gitignored) or export SUPABASE_DB_PASSWORD.
+spring:
+  datasource:
+    password: Priyanshu123

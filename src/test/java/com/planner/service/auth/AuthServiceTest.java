@@ -10,6 +10,7 @@ import com.planner.repositories.auth.SessionRepository;
 import com.planner.repositories.auth.UserRepository;
 import com.planner.security.JwtTokenProvider;
 import com.planner.service.auth.impl.AuthServiceImpl;
+import com.planner.service.bootstrap.UserWelcomeDataService;
 import com.planner.service.email.EmailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,6 +46,9 @@ class AuthServiceTest {
 
     @Mock
     private EmailService emailService;
+
+    @Mock
+    private UserWelcomeDataService userWelcomeDataService;
 
     @InjectMocks
     private AuthServiceImpl authService;
@@ -97,6 +101,7 @@ class AuthServiceTest {
         assertThat(result.getData().getRefreshToken()).isEqualTo("refresh-token");
         assertThat(result.getData().getUser().getEmail()).isEqualTo("test@example.com");
         verify(userRepository).save(any(User.class));
+        verify(userWelcomeDataService).seedForNewUser(1L);
     }
 
     @Test

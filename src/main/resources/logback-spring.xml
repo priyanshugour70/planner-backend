@@ -35,16 +35,17 @@
         </encoder>
     </appender>
 
-    <springProfile name="default">
+    <springProfile name="prod">
         <root level="INFO">
-            <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
             <appender-ref ref="JSON_FILE"/>
         </root>
     </springProfile>
 
-    <springProfile name="prod">
+    <!-- Any non-prod profile (postgres, local, h2, test, default, …): console + files so the IDE is not silent -->
+    <springProfile name="!prod">
         <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
             <appender-ref ref="JSON_FILE"/>
         </root>

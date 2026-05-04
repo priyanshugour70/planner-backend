@@ -34,3 +34,9 @@ build/
 
 
 logs/
+
+# Local secrets (copy from src/main/resources/application-local.example.yaml)
+src/main/resources/application-local.yaml
+src/main/resources/application-local.properties
+application-local.yaml
+application-local.properties
