@@ -62,6 +62,11 @@ public class User extends BaseEntity {
     @Column(name = "fcm_token")
     private String fcmToken;
 
+    /** When true, default goals/tasks/habits/etc. were already created for this account. */
+    @Column(name = "welcome_data_seeded")
+    @Builder.Default
+    private Boolean welcomeDataSeeded = false;
+
     public String getFullName() {
         return (firstName + " " + (lastName != null ? lastName : "")).trim();
     }

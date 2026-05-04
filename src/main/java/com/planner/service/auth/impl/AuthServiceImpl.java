@@ -14,6 +14,7 @@ import com.planner.repositories.auth.UserRepository;
 import com.planner.security.JwtTokenProvider;
 import com.planner.security.SecurityUtils;
 import com.planner.service.auth.AuthService;
+import com.planner.service.bootstrap.UserWelcomeDataService;
 import com.planner.service.email.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final EmailService emailService;
+    private final UserWelcomeDataService userWelcomeDataService;
 
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
@@ -74,6 +76,7 @@ public class AuthServiceImpl implements AuthService {
 
         User savedUser = userRepository.save(user);
         log.info("User registered successfully with id: {}", savedUser.getId());
+        userWelcomeDataService.seedForNewUser(savedUser.getId());
 
         String verificationToken = jwtTokenProvider.generateAccessToken(savedUser.getId(), savedUser.getEmail());
         emailService.sendVerificationEmail(savedUser.getEmail(), savedUser.getFirstName(), verificationToken);
@@ -177,6 +180,7 @@ public class AuthServiceImpl implements AuthService {
         otpRepository.save(otpCode);
 
         Optional<User> existingUser = userRepository.findByEmailAndActiveTrue(email);
+        final boolean isBrandNewAccount = existingUser.isEmpty();
         User user;
 
         if (existingUser.isPresent()) {
@@ -202,6 +206,9 @@ public class AuthServiceImpl implements AuthService {
 
         if (request.getGuestToken() != null && !request.getGuestToken().isBlank()) {
             mergeGuestData(request.getGuestToken(), savedUser);
+        }
+        if (isBrandNewAccount) {
+            userWelcomeDataService.seedForNewUser(savedUser.getId());
         }
 
         String accessToken = jwtTokenProvider.generateAccessToken(savedUser.getId(), savedUser.getEmail());
@@ -248,6 +255,7 @@ public class AuthServiceImpl implements AuthService {
 
         User savedGuest = userRepository.save(guestUser);
         log.info("Guest user created - userId: {}, email: {}", savedGuest.getId(), guestEmail);
+        userWelcomeDataService.seedForNewUser(savedGuest.getId());
 
         String accessToken = jwtTokenProvider.generateAccessToken(savedGuest.getId(), savedGuest.getEmail());
         String refreshToken = jwtTokenProvider.generateRefreshToken(savedGuest.getId(), savedGuest.getEmail());
