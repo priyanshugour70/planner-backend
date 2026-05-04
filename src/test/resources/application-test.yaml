@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: planner-backend-test
+  datasource:
+    url: jdbc:postgresql://localhost:5432/planner_test_db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  flyway:
+    enabled: false
+  cache:
+    type: caffeine
+
+app:
+  jwt:
+    secret: testSecretKeyForJWTTokenGeneration2024SecureRandomStringTestOnly
+    access-token-expiry: 3600000
+    refresh-token-expiry: 86400000
+  cors:
+    allowed-origins: http://localhost:3000
+
+logging:
+  level:
+    root: WARN
+    com.planner: DEBUG
