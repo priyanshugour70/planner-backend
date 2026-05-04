@@ -41,6 +41,13 @@ public class FinanceController {
         return toApiResponse(result, "Transactions retrieved successfully");
     }
 
+    @GetMapping("/transactions/{uuid}")
+    @Operation(summary = "Get a transaction by UUID")
+    public ResponseEntity<APIResponse<Transaction>> getTransactionByUuid(@PathVariable String uuid) {
+        ServiceResult<Transaction> result = financeService.getTransactionByUuid(uuid);
+        return toApiResponse(result, "Transaction retrieved successfully");
+    }
+
     @PutMapping("/transactions/{uuid}")
     @Operation(summary = "Update a transaction")
     public ResponseEntity<APIResponse<Transaction>> updateTransaction(

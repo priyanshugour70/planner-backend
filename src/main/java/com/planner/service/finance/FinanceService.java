@@ -13,6 +13,8 @@ public interface FinanceService {
 
     ServiceResult<Transaction> createTransaction(Transaction transaction);
 
+    ServiceResult<Transaction> getTransactionByUuid(String uuid);
+
     ServiceResult<Transaction> updateTransaction(String uuid, Transaction transaction);
 
     ServiceResult<Void> deleteTransaction(String uuid);

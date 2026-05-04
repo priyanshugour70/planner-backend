@@ -28,7 +28,7 @@ public class HabitEntry extends BaseEntity {
     @Column(name = "date", nullable = false)
     private Long date;
 
-    @Column(name = "value")
+    @Column(name = "\"value\"")
     private Float value = 0f;
 
     @Column(name = "is_completed")

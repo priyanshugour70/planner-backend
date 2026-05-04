@@ -54,6 +54,18 @@ public class FinanceServiceImpl implements FinanceService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public ServiceResult<Transaction> getTransactionByUuid(String uuid) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        log.debug("Fetching transaction uuid: {} for user: {}", uuid, userId);
+
+        return transactionRepository.findByUuidAndUserIdAndActiveTrue(uuid, userId)
+                .map(ServiceResult::ok)
+                .orElseGet(() -> ServiceResult.fail(HttpStatus.NOT_FOUND,
+                        List.of(ErrorResponse.of(HttpStatus.NOT_FOUND, "Transaction not found"))));
+    }
+
+    @Override
     public ServiceResult<Transaction> updateTransaction(String uuid, Transaction transaction) {
         Long userId = SecurityUtils.getCurrentUserId();
         log.info("Updating transaction uuid: {} for user: {}", uuid, userId);
