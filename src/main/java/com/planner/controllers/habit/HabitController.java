@@ -1,6 +1,7 @@
 package com.planner.controllers.habit;
 
 import com.planner.dtos.APIResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.habit.Habit;
 import com.planner.entities.habit.HabitEntry;
@@ -18,7 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/habits")
 @RequiredArgsConstructor
-@Tag(name = "Habits", description = "Habit tracking and management")
+@Tag(name = "Habits", description = "Habit tracking")
 public class HabitController {
 
     private final HabitService habitService;
@@ -31,9 +32,11 @@ public class HabitController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all habits for the current user")
-    public ResponseEntity<APIResponse<List<Habit>>> getAll() {
-        ServiceResult<List<Habit>> result = habitService.getAllHabits();
+    @Operation(summary = "Get all habits with pagination")
+    public ResponseEntity<APIResponse<Pagination<Habit>>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<Habit>> result = habitService.getAllHabits(page, size);
         return toApiResponse(result, "Habits retrieved successfully");
     }
 
@@ -73,14 +76,17 @@ public class HabitController {
     }
 
     @GetMapping("/{habitUuid}/entries")
-    @Operation(summary = "Get all entries for a habit")
-    public ResponseEntity<APIResponse<List<HabitEntry>>> getEntries(@PathVariable String habitUuid) {
-        ServiceResult<List<HabitEntry>> result = habitService.getHabitEntries(habitUuid);
+    @Operation(summary = "Get habit entries with pagination")
+    public ResponseEntity<APIResponse<Pagination<HabitEntry>>> getEntries(
+            @PathVariable String habitUuid,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<HabitEntry>> result = habitService.getHabitEntries(habitUuid, page, size);
         return toApiResponse(result, "Habit entries retrieved successfully");
     }
 
     @GetMapping("/{habitUuid}/stats")
-    @Operation(summary = "Get statistics for a habit")
+    @Operation(summary = "Get habit statistics")
     public ResponseEntity<APIResponse<Map<String, Object>>> getStats(@PathVariable String habitUuid) {
         ServiceResult<Map<String, Object>> result = habitService.getHabitStats(habitUuid);
         return toApiResponse(result, "Habit stats retrieved successfully");

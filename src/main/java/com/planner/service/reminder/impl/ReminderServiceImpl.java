@@ -1,6 +1,7 @@
 package com.planner.service.reminder.impl;
 
 import com.planner.dtos.ErrorResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.reminder.Reminder;
 import com.planner.repositories.reminder.ReminderRepository;
@@ -8,6 +9,8 @@ import com.planner.security.SecurityUtils;
 import com.planner.service.reminder.ReminderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,12 +110,13 @@ public class ReminderServiceImpl implements ReminderService {
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<Reminder>> getAllReminders() {
+    public ServiceResult<Pagination<Reminder>> getAllReminders(int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching all reminders for user: {}", userId);
+        log.debug("Fetching all reminders for user: {} page: {} size: {}", userId, page, size);
 
-        List<Reminder> reminders = reminderRepository.findByUserIdAndActiveTrueOrderByReminderTimeAsc(userId);
-        return ServiceResult.ok(reminders);
+        Page<Reminder> reminderPage = reminderRepository.findByUserIdAndActiveTrueOrderByReminderTimeAsc(userId, PageRequest.of(page, size));
+        Pagination<Reminder> pagination = Pagination.of(reminderPage.getContent(), page, size, reminderPage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 
     @Override

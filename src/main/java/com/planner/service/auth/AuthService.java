@@ -26,4 +26,10 @@ public interface AuthService {
     ServiceResult<UserResponse> getCurrentUser();
 
     ServiceResult<UserResponse> updateProfile(UpdateProfileRequest request);
+
+    ServiceResult<Void> sendOtp(SendOtpRequest request);
+
+    ServiceResult<AuthResponse> verifyOtp(VerifyOtpRequest request, String ipAddress);
+
+    ServiceResult<AuthResponse> guestLogin(GuestLoginRequest request, String ipAddress);
 }

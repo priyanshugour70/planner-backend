@@ -1,6 +1,7 @@
 package com.planner.service.habit.impl;
 
 import com.planner.dtos.ErrorResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.habit.Habit;
 import com.planner.entities.habit.HabitEntry;
@@ -10,6 +11,8 @@ import com.planner.security.SecurityUtils;
 import com.planner.service.habit.HabitService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,12 +112,13 @@ public class HabitServiceImpl implements HabitService {
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<Habit>> getAllHabits() {
+    public ServiceResult<Pagination<Habit>> getAllHabits(int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching all habits for user: {}", userId);
+        log.debug("Fetching all habits for user: {} page: {} size: {}", userId, page, size);
 
-        List<Habit> habits = habitRepository.findByUserIdAndActiveTrueOrderByCreatedAtDesc(userId);
-        return ServiceResult.ok(habits);
+        Page<Habit> habitPage = habitRepository.findByUserIdAndActiveTrueOrderByCreatedAtDesc(userId, PageRequest.of(page, size));
+        Pagination<Habit> pagination = Pagination.of(habitPage.getContent(), page, size, habitPage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 
     @Override
@@ -167,9 +171,9 @@ public class HabitServiceImpl implements HabitService {
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<HabitEntry>> getHabitEntries(String habitUuid) {
+    public ServiceResult<Pagination<HabitEntry>> getHabitEntries(String habitUuid, int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching entries for habit: {} for user: {}", habitUuid, userId);
+        log.debug("Fetching entries for habit: {} for user: {} page: {} size: {}", habitUuid, userId, page, size);
 
         Optional<Habit> habitOpt = habitRepository.findByUuidAndUserIdAndActiveTrue(habitUuid, userId);
         if (habitOpt.isEmpty()) {
@@ -177,8 +181,9 @@ public class HabitServiceImpl implements HabitService {
                     List.of(ErrorResponse.of(HttpStatus.NOT_FOUND, "Habit not found")));
         }
 
-        List<HabitEntry> entries = habitEntryRepository.findByUserIdAndHabitIdAndActiveTrueOrderByDateDesc(userId, habitUuid);
-        return ServiceResult.ok(entries);
+        Page<HabitEntry> entryPage = habitEntryRepository.findByUserIdAndHabitIdAndActiveTrueOrderByDateDesc(userId, habitUuid, PageRequest.of(page, size));
+        Pagination<HabitEntry> pagination = Pagination.of(entryPage.getContent(), page, size, entryPage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 
     @Override

@@ -22,4 +22,5 @@ public class UserResponse {
     private String profileImageUrl;
     private Boolean isEmailVerified;
     private Boolean isOnboardingComplete;
+    private Boolean isGuest;
 }

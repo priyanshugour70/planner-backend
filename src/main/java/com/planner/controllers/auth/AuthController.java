@@ -38,6 +38,31 @@ public class AuthController {
         return toApiResponse(result, "Login successful");
     }
 
+    @PostMapping("/send-otp")
+    @Operation(summary = "Send OTP code to email for passwordless login")
+    public ResponseEntity<APIResponse<Void>> sendOtp(@Valid @RequestBody SendOtpRequest request) {
+        ServiceResult<Void> result = authService.sendOtp(request);
+        return toApiResponse(result, "OTP sent successfully");
+    }
+
+    @PostMapping("/verify-otp")
+    @Operation(summary = "Verify OTP code and login/register user")
+    public ResponseEntity<APIResponse<AuthResponse>> verifyOtp(
+            @Valid @RequestBody VerifyOtpRequest request, HttpServletRequest httpRequest) {
+        String ipAddress = httpRequest.getRemoteAddr();
+        ServiceResult<AuthResponse> result = authService.verifyOtp(request, ipAddress);
+        return toApiResponse(result, "OTP verified successfully");
+    }
+
+    @PostMapping("/guest")
+    @Operation(summary = "Login as a guest user")
+    public ResponseEntity<APIResponse<AuthResponse>> guestLogin(
+            @RequestBody GuestLoginRequest request, HttpServletRequest httpRequest) {
+        String ipAddress = httpRequest.getRemoteAddr();
+        ServiceResult<AuthResponse> result = authService.guestLogin(request, ipAddress);
+        return toApiResponse(result, "Guest login successful");
+    }
+
     @PostMapping("/refresh-token")
     @Operation(summary = "Refresh access token using refresh token")
     public ResponseEntity<APIResponse<AuthResponse>> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {

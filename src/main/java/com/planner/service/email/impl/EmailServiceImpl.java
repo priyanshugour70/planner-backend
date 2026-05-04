@@ -94,7 +94,45 @@ public class EmailServiceImpl implements EmailService {
         sendHtmlEmail(toEmail, subject, body);
     }
 
+    @Async
+    @Override
+    public void sendOtpEmail(String toEmail, String otpCode) {
+        String subject = "Your login code - Planner";
+
+        StringBuilder html = new StringBuilder();
+        html.append("<!DOCTYPE html><html><head><meta charset='UTF-8'></head><body style='")
+            .append("font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;")
+            .append("margin:0;padding:0;background-color:#f5f5f5;'>");
+        html.append("<div style='max-width:600px;margin:40px auto;background:#ffffff;border-radius:12px;")
+            .append("box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:hidden;'>");
+
+        html.append("<div style='background:#4F46E5;padding:32px;text-align:center;'>");
+        html.append("<h1 style='color:#ffffff;margin:0;font-size:24px;'>Your Login Code</h1>");
+        html.append("</div>");
+
+        html.append("<div style='padding:32px;text-align:center;'>");
+        html.append("<p style='font-size:16px;color:#333;'>Use this code to sign in to Planner:</p>");
+        html.append("<div style='margin:24px 0;padding:20px;background:#f0f0ff;border-radius:12px;'>");
+        html.append("<span style='font-size:36px;font-weight:bold;letter-spacing:8px;color:#4F46E5;'>")
+            .append(otpCode).append("</span>");
+        html.append("</div>");
+        html.append("<p style='font-size:14px;color:#666;'>This code expires in 5 minutes.</p>");
+        html.append("<p style='font-size:13px;color:#999;margin-top:24px;'>If you didn't request this code, you can safely ignore this email.</p>");
+        html.append("</div>");
+
+        html.append("<div style='background:#f9f9f9;padding:16px;text-align:center;'>");
+        html.append("<p style='font-size:12px;color:#aaa;margin:0;'>&copy; Planner. All rights reserved.</p>");
+        html.append("</div>");
+
+        html.append("</div></body></html>");
+
+        sendHtmlEmail(toEmail, subject, html.toString());
+    }
+
     private void sendHtmlEmail(String to, String subject, String htmlBody) {
+
+        log.info("Sending email to {} with subject: {} and body: {}", to, subject, htmlBody);
+
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");

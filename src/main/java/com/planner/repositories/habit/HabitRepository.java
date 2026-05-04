@@ -1,6 +1,8 @@
 package com.planner.repositories.habit;
 
 import com.planner.entities.habit.Habit;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,17 +14,16 @@ import java.util.Optional;
 @Repository
 public interface HabitRepository extends JpaRepository<Habit, Long> {
 
-    List<Habit> findByUserIdAndActiveTrueOrderByCreatedAtDesc(Long userId);
+    Page<Habit> findByUserIdAndActiveTrueOrderByCreatedAtDesc(Long userId, Pageable pageable);
 
-    Optional<Habit> findByUuidAndActiveTrue(String uuid);
+    List<Habit> findByUserIdAndActiveTrueOrderByCreatedAtDesc(Long userId);
 
     Optional<Habit> findByUuidAndUserIdAndActiveTrue(String uuid, Long userId);
 
-    @Query("SELECT h FROM Habit h WHERE h.userId = :userId AND h.isActive = true AND h.active = true")
+    @Query("SELECT h FROM Habit h WHERE h.userId = :userId AND h.active = true AND h.isActive = true ORDER BY h.createdAt DESC")
     List<Habit> findActiveHabits(@Param("userId") Long userId);
 
-    @Query("SELECT h FROM Habit h WHERE h.userId = :userId AND h.goalId = :goalId AND h.active = true")
-    List<Habit> findByGoalId(@Param("userId") Long userId, @Param("goalId") String goalId);
+    long countByUserIdAndActiveTrue(Long userId);
 
     long countByUserIdAndIsActiveTrueAndActiveTrue(Long userId);
 }

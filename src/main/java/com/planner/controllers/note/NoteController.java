@@ -1,6 +1,7 @@
 package com.planner.controllers.note;
 
 import com.planner.dtos.APIResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.note.Note;
 import com.planner.service.note.NoteService;
@@ -29,9 +30,11 @@ public class NoteController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all notes")
-    public ResponseEntity<APIResponse<List<Note>>> getAll() {
-        ServiceResult<List<Note>> result = noteService.getAllNotes();
+    @Operation(summary = "Get all notes with pagination")
+    public ResponseEntity<APIResponse<Pagination<Note>>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<Note>> result = noteService.getAllNotes(page, size);
         return toApiResponse(result, "Notes retrieved successfully");
     }
 
@@ -64,9 +67,12 @@ public class NoteController {
     }
 
     @GetMapping("/category/{category}")
-    @Operation(summary = "Get notes by category")
-    public ResponseEntity<APIResponse<List<Note>>> getByCategory(@PathVariable String category) {
-        ServiceResult<List<Note>> result = noteService.getNotesByCategory(category);
+    @Operation(summary = "Get notes by category with pagination")
+    public ResponseEntity<APIResponse<Pagination<Note>>> getByCategory(
+            @PathVariable String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<Note>> result = noteService.getNotesByCategory(category, page, size);
         return toApiResponse(result, "Notes retrieved successfully");
     }
 

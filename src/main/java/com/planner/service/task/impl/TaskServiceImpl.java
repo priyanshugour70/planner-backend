@@ -1,6 +1,7 @@
 package com.planner.service.task.impl;
 
 import com.planner.dtos.ErrorResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.task.Subtask;
 import com.planner.entities.task.Task;
@@ -9,6 +10,8 @@ import com.planner.security.SecurityUtils;
 import com.planner.service.task.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -128,32 +131,35 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<Task>> getAllTasks() {
+    public ServiceResult<Pagination<Task>> getAllTasks(int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching all tasks for user: {}", userId);
+        log.debug("Fetching all tasks for user: {} page: {} size: {}", userId, page, size);
 
-        List<Task> tasks = taskRepository.findByUserIdAndActiveTrueOrderByCreatedAtDesc(userId);
-        return ServiceResult.ok(tasks);
+        Page<Task> taskPage = taskRepository.findByUserIdAndActiveTrueOrderByCreatedAtDesc(userId, PageRequest.of(page, size));
+        Pagination<Task> pagination = Pagination.of(taskPage.getContent(), page, size, taskPage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<Task>> getPendingTasks() {
+    public ServiceResult<Pagination<Task>> getPendingTasks(int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching pending tasks for user: {}", userId);
+        log.debug("Fetching pending tasks for user: {} page: {} size: {}", userId, page, size);
 
-        List<Task> tasks = taskRepository.findPendingTasks(userId);
-        return ServiceResult.ok(tasks);
+        Page<Task> taskPage = taskRepository.findPendingTasks(userId, PageRequest.of(page, size));
+        Pagination<Task> pagination = Pagination.of(taskPage.getContent(), page, size, taskPage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<Task>> getCompletedTasks() {
+    public ServiceResult<Pagination<Task>> getCompletedTasks(int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching completed tasks for user: {}", userId);
+        log.debug("Fetching completed tasks for user: {} page: {} size: {}", userId, page, size);
 
-        List<Task> tasks = taskRepository.findCompletedTasks(userId);
-        return ServiceResult.ok(tasks);
+        Page<Task> taskPage = taskRepository.findCompletedTasks(userId, PageRequest.of(page, size));
+        Pagination<Task> pagination = Pagination.of(taskPage.getContent(), page, size, taskPage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 
     @Override
@@ -228,11 +234,12 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<Task>> getTasksByDateRange(Long startDate, Long endDate) {
+    public ServiceResult<Pagination<Task>> getTasksByDateRange(Long startDate, Long endDate, int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching tasks by date range [{} - {}] for user: {}", startDate, endDate, userId);
+        log.debug("Fetching tasks by date range [{} - {}] for user: {} page: {} size: {}", startDate, endDate, userId, page, size);
 
-        List<Task> tasks = taskRepository.findTasksByDateRange(userId, startDate, endDate);
-        return ServiceResult.ok(tasks);
+        Page<Task> taskPage = taskRepository.findTasksByDateRange(userId, startDate, endDate, PageRequest.of(page, size));
+        Pagination<Task> pagination = Pagination.of(taskPage.getContent(), page, size, taskPage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 }

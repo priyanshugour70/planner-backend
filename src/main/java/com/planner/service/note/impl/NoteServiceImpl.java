@@ -1,6 +1,7 @@
 package com.planner.service.note.impl;
 
 import com.planner.dtos.ErrorResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.note.Note;
 import com.planner.repositories.note.NoteRepository;
@@ -8,6 +9,8 @@ import com.planner.security.SecurityUtils;
 import com.planner.service.note.NoteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,12 +119,13 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<Note>> getAllNotes() {
+    public ServiceResult<Pagination<Note>> getAllNotes(int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching all notes for user: {}", userId);
+        log.debug("Fetching all notes for user: {} page: {} size: {}", userId, page, size);
 
-        List<Note> notes = noteRepository.findByUserIdAndActiveTrueOrderByIsPinnedDescUpdatedAtDesc(userId);
-        return ServiceResult.ok(notes);
+        Page<Note> notePage = noteRepository.findByUserIdAndActiveTrueOrderByIsPinnedDescUpdatedAtDesc(userId, PageRequest.of(page, size));
+        Pagination<Note> pagination = Pagination.of(notePage.getContent(), page, size, notePage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 
     @Override
@@ -136,11 +140,12 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<Note>> getNotesByCategory(String category) {
+    public ServiceResult<Pagination<Note>> getNotesByCategory(String category, int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching notes by category: {} for user: {}", category, userId);
+        log.debug("Fetching notes by category: {} for user: {} page: {} size: {}", category, userId, page, size);
 
-        List<Note> notes = noteRepository.findByCategory(userId, category);
-        return ServiceResult.ok(notes);
+        Page<Note> notePage = noteRepository.findByCategory(userId, category, PageRequest.of(page, size));
+        Pagination<Note> pagination = Pagination.of(notePage.getContent(), page, size, notePage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 }

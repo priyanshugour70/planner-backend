@@ -1,6 +1,7 @@
 package com.planner.controllers.journal;
 
 import com.planner.dtos.APIResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.journal.JournalEntry;
 import com.planner.enums.JournalMood;
@@ -16,24 +17,26 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/journals")
+@RequestMapping("/api/v1/journal")
 @RequiredArgsConstructor
-@Tag(name = "Journals", description = "Journal entry management")
+@Tag(name = "Journal", description = "Journal entry management")
 public class JournalController {
 
     private final JournalService journalService;
 
     @PostMapping
-    @Operation(summary = "Create a new journal entry")
+    @Operation(summary = "Create a journal entry")
     public ResponseEntity<APIResponse<JournalEntry>> create(@Valid @RequestBody JournalEntry entry) {
         ServiceResult<JournalEntry> result = journalService.createEntry(entry);
         return toApiResponse(result, "Journal entry created successfully");
     }
 
     @GetMapping
-    @Operation(summary = "Get all journal entries for the current user")
-    public ResponseEntity<APIResponse<List<JournalEntry>>> getAll() {
-        ServiceResult<List<JournalEntry>> result = journalService.getAllEntries();
+    @Operation(summary = "Get all journal entries with pagination")
+    public ResponseEntity<APIResponse<Pagination<JournalEntry>>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<JournalEntry>> result = journalService.getAllEntries(page, size);
         return toApiResponse(result, "Journal entries retrieved successfully");
     }
 
@@ -46,8 +49,7 @@ public class JournalController {
 
     @PutMapping("/{uuid}")
     @Operation(summary = "Update a journal entry")
-    public ResponseEntity<APIResponse<JournalEntry>> update(
-            @PathVariable String uuid, @Valid @RequestBody JournalEntry entry) {
+    public ResponseEntity<APIResponse<JournalEntry>> update(@PathVariable String uuid, @Valid @RequestBody JournalEntry entry) {
         ServiceResult<JournalEntry> result = journalService.updateEntry(uuid, entry);
         return toApiResponse(result, "Journal entry updated successfully");
     }
@@ -60,11 +62,12 @@ public class JournalController {
     }
 
     @GetMapping("/date-range")
-    @Operation(summary = "Get journal entries within a date range")
-    public ResponseEntity<APIResponse<List<JournalEntry>>> getByDateRange(
-            @RequestParam Long startDate,
-            @RequestParam Long endDate) {
-        ServiceResult<List<JournalEntry>> result = journalService.getEntriesByDateRange(startDate, endDate);
+    @Operation(summary = "Get journal entries by date range with pagination")
+    public ResponseEntity<APIResponse<Pagination<JournalEntry>>> getByDateRange(
+            @RequestParam Long startDate, @RequestParam Long endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<JournalEntry>> result = journalService.getEntriesByDateRange(startDate, endDate, page, size);
         return toApiResponse(result, "Journal entries retrieved successfully");
     }
 

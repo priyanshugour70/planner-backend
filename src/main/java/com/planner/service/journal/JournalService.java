@@ -1,5 +1,6 @@
 package com.planner.service.journal;
 
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.journal.JournalEntry;
 import com.planner.enums.JournalMood;
@@ -17,9 +18,9 @@ public interface JournalService {
 
     ServiceResult<JournalEntry> getEntryByUuid(String uuid);
 
-    ServiceResult<List<JournalEntry>> getAllEntries();
+    ServiceResult<Pagination<JournalEntry>> getAllEntries(int page, int size);
 
-    ServiceResult<List<JournalEntry>> getEntriesByDateRange(Long startDate, Long endDate);
+    ServiceResult<Pagination<JournalEntry>> getEntriesByDateRange(Long startDate, Long endDate, int page, int size);
 
     ServiceResult<List<JournalEntry>> getEntriesByMood(JournalMood mood);
 

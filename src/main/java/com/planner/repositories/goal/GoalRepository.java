@@ -2,6 +2,8 @@ package com.planner.repositories.goal;
 
 import com.planner.entities.goal.Goal;
 import com.planner.enums.GoalCategory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,6 +14,8 @@ import java.util.Optional;
 
 @Repository
 public interface GoalRepository extends JpaRepository<Goal, Long> {
+
+    Page<Goal> findByUserIdAndActiveTrueOrderByNumberAsc(Long userId, Pageable pageable);
 
     List<Goal> findByUserIdAndActiveTrueOrderByNumberAsc(Long userId);
 

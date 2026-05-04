@@ -1,5 +1,6 @@
 package com.planner.service.finance;
 
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.finance.Budget;
 import com.planner.entities.finance.Transaction;
@@ -16,11 +17,11 @@ public interface FinanceService {
 
     ServiceResult<Void> deleteTransaction(String uuid);
 
-    ServiceResult<List<Transaction>> getAllTransactions();
+    ServiceResult<Pagination<Transaction>> getAllTransactions(int page, int size);
 
-    ServiceResult<List<Transaction>> getTransactionsByType(TransactionType type);
+    ServiceResult<Pagination<Transaction>> getTransactionsByType(TransactionType type, int page, int size);
 
-    ServiceResult<List<Transaction>> getTransactionsByDateRange(Long startDate, Long endDate);
+    ServiceResult<Pagination<Transaction>> getTransactionsByDateRange(Long startDate, Long endDate, int page, int size);
 
     ServiceResult<Budget> createBudget(Budget budget);
 

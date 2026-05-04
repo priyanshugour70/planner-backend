@@ -9,4 +9,6 @@ public interface EmailService {
     void sendPasswordChangedNotification(String toEmail, String userName);
 
     void sendWelcomeEmail(String toEmail, String userName);
+
+    void sendOtpEmail(String toEmail, String otpCode);
 }

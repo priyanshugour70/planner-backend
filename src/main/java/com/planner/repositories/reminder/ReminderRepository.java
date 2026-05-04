@@ -1,6 +1,8 @@
 package com.planner.repositories.reminder;
 
 import com.planner.entities.reminder.Reminder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,17 +14,14 @@ import java.util.Optional;
 @Repository
 public interface ReminderRepository extends JpaRepository<Reminder, Long> {
 
-    List<Reminder> findByUserIdAndActiveTrueOrderByReminderTimeAsc(Long userId);
+    Page<Reminder> findByUserIdAndActiveTrueOrderByReminderTimeAsc(Long userId, Pageable pageable);
 
-    Optional<Reminder> findByUuidAndActiveTrue(String uuid);
+    List<Reminder> findByUserIdAndActiveTrueOrderByReminderTimeAsc(Long userId);
 
     Optional<Reminder> findByUuidAndUserIdAndActiveTrue(String uuid, Long userId);
 
-    @Query("SELECT r FROM Reminder r WHERE r.userId = :userId AND r.isCompleted = false AND r.isEnabled = true AND r.active = true ORDER BY r.reminderTime ASC")
+    @Query("SELECT r FROM Reminder r WHERE r.userId = :userId AND r.active = true AND r.isEnabled = true AND r.isCompleted = false ORDER BY r.reminderTime ASC")
     List<Reminder> findActiveReminders(@Param("userId") Long userId);
-
-    @Query("SELECT r FROM Reminder r WHERE r.userId = :userId AND r.reminderTime BETWEEN :startTime AND :endTime AND r.active = true")
-    List<Reminder> findByTimeRange(@Param("userId") Long userId, @Param("startTime") Long startTime, @Param("endTime") Long endTime);
 
     long countByUserIdAndActiveTrue(Long userId);
 }

@@ -1,5 +1,6 @@
 package com.planner.service.task;
 
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.task.Subtask;
 import com.planner.entities.task.Task;
@@ -16,11 +17,11 @@ public interface TaskService {
 
     ServiceResult<Task> getTaskByUuid(String uuid);
 
-    ServiceResult<List<Task>> getAllTasks();
+    ServiceResult<Pagination<Task>> getAllTasks(int page, int size);
 
-    ServiceResult<List<Task>> getPendingTasks();
+    ServiceResult<Pagination<Task>> getPendingTasks(int page, int size);
 
-    ServiceResult<List<Task>> getCompletedTasks();
+    ServiceResult<Pagination<Task>> getCompletedTasks(int page, int size);
 
     ServiceResult<Task> completeTask(String uuid);
 
@@ -28,5 +29,5 @@ public interface TaskService {
 
     ServiceResult<Task> removeSubtask(String taskUuid, String subtaskUuid);
 
-    ServiceResult<List<Task>> getTasksByDateRange(Long startDate, Long endDate);
+    ServiceResult<Pagination<Task>> getTasksByDateRange(Long startDate, Long endDate, int page, int size);
 }

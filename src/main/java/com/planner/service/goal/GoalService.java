@@ -1,5 +1,6 @@
 package com.planner.service.goal;
 
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.goal.Goal;
 import com.planner.entities.goal.Milestone;
@@ -17,7 +18,7 @@ public interface GoalService {
 
     ServiceResult<Goal> getGoalByUuid(String uuid);
 
-    ServiceResult<List<Goal>> getAllGoals();
+    ServiceResult<Pagination<Goal>> getAllGoals(int page, int size);
 
     ServiceResult<List<Goal>> getGoalsByCategory(GoalCategory category);
 

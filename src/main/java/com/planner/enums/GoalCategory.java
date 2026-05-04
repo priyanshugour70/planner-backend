@@ -9,5 +9,11 @@ public enum GoalCategory {
     DISCIPLINE,
     FINANCE,
     STARTUP,
-    MINDFULNESS
+    MINDFULNESS,
+    PERSONAL,
+    RELATIONSHIPS,
+    CREATIVITY,
+    FITNESS,
+    TRAVEL,
+    OTHER
 }

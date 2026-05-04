@@ -2,6 +2,8 @@ package com.planner.repositories.journal;
 
 import com.planner.entities.journal.JournalEntry;
 import com.planner.enums.JournalMood;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,16 +15,19 @@ import java.util.Optional;
 @Repository
 public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long> {
 
-    List<JournalEntry> findByUserIdAndActiveTrueOrderByDateDesc(Long userId);
+    Page<JournalEntry> findByUserIdAndActiveTrueOrderByDateDesc(Long userId, Pageable pageable);
 
-    Optional<JournalEntry> findByUuidAndActiveTrue(String uuid);
+    List<JournalEntry> findByUserIdAndActiveTrueOrderByDateDesc(Long userId);
 
     Optional<JournalEntry> findByUuidAndUserIdAndActiveTrue(String uuid, Long userId);
 
-    @Query("SELECT j FROM JournalEntry j WHERE j.userId = :userId AND j.date BETWEEN :startDate AND :endDate AND j.active = true ORDER BY j.date DESC")
+    @Query("SELECT j FROM JournalEntry j WHERE j.userId = :userId AND j.active = true AND j.date BETWEEN :startDate AND :endDate ORDER BY j.date DESC")
+    Page<JournalEntry> findByDateRange(@Param("userId") Long userId, @Param("startDate") Long startDate, @Param("endDate") Long endDate, Pageable pageable);
+
+    @Query("SELECT j FROM JournalEntry j WHERE j.userId = :userId AND j.active = true AND j.date BETWEEN :startDate AND :endDate ORDER BY j.date DESC")
     List<JournalEntry> findByDateRange(@Param("userId") Long userId, @Param("startDate") Long startDate, @Param("endDate") Long endDate);
 
-    @Query("SELECT j FROM JournalEntry j WHERE j.userId = :userId AND j.mood = :mood AND j.active = true ORDER BY j.date DESC")
+    @Query("SELECT j FROM JournalEntry j WHERE j.userId = :userId AND j.active = true AND j.mood = :mood ORDER BY j.date DESC")
     List<JournalEntry> findByMood(@Param("userId") Long userId, @Param("mood") JournalMood mood);
 
     long countByUserIdAndActiveTrue(Long userId);

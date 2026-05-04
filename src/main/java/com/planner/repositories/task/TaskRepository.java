@@ -1,6 +1,8 @@
 package com.planner.repositories.task;
 
 import com.planner.entities.task.Task;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,25 +14,33 @@ import java.util.Optional;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
-    List<Task> findByUserIdAndActiveTrueOrderByCreatedAtDesc(Long userId);
+    Page<Task> findByUserIdAndActiveTrueOrderByCreatedAtDesc(Long userId, Pageable pageable);
 
-    Optional<Task> findByUuidAndActiveTrue(String uuid);
+    List<Task> findByUserIdAndActiveTrueOrderByCreatedAtDesc(Long userId);
 
     Optional<Task> findByUuidAndUserIdAndActiveTrue(String uuid, Long userId);
 
-    @Query("SELECT t FROM Task t WHERE t.userId = :userId AND t.isCompleted = false AND t.active = true ORDER BY t.dueDate ASC NULLS LAST")
+    @Query("SELECT t FROM Task t WHERE t.userId = :userId AND t.active = true AND t.isCompleted = false ORDER BY t.dueDate ASC")
+    Page<Task> findPendingTasks(@Param("userId") Long userId, Pageable pageable);
+
+    @Query("SELECT t FROM Task t WHERE t.userId = :userId AND t.active = true AND t.isCompleted = false ORDER BY t.dueDate ASC")
     List<Task> findPendingTasks(@Param("userId") Long userId);
 
-    @Query("SELECT t FROM Task t WHERE t.userId = :userId AND t.isCompleted = true AND t.active = true ORDER BY t.completedAt DESC")
+    @Query("SELECT t FROM Task t WHERE t.userId = :userId AND t.active = true AND t.isCompleted = true ORDER BY t.completedAt DESC")
+    Page<Task> findCompletedTasks(@Param("userId") Long userId, Pageable pageable);
+
+    @Query("SELECT t FROM Task t WHERE t.userId = :userId AND t.active = true AND t.isCompleted = true ORDER BY t.completedAt DESC")
     List<Task> findCompletedTasks(@Param("userId") Long userId);
 
-    @Query("SELECT t FROM Task t WHERE t.userId = :userId AND t.dueDate BETWEEN :startDate AND :endDate AND t.active = true")
+    @Query("SELECT t FROM Task t WHERE t.userId = :userId AND t.active = true AND t.dueDate BETWEEN :startDate AND :endDate ORDER BY t.dueDate ASC")
+    Page<Task> findTasksByDateRange(@Param("userId") Long userId, @Param("startDate") Long startDate, @Param("endDate") Long endDate, Pageable pageable);
+
+    @Query("SELECT t FROM Task t WHERE t.userId = :userId AND t.active = true AND t.dueDate BETWEEN :startDate AND :endDate ORDER BY t.dueDate ASC")
     List<Task> findTasksByDateRange(@Param("userId") Long userId, @Param("startDate") Long startDate, @Param("endDate") Long endDate);
 
-    @Query("SELECT t FROM Task t WHERE t.userId = :userId AND t.linkedGoalId = :goalId AND t.active = true")
-    List<Task> findByLinkedGoalId(@Param("userId") Long userId, @Param("goalId") String goalId);
+    long countByUserIdAndActiveTrue(Long userId);
+
+    long countByUserIdAndActiveTrueAndIsCompletedTrue(Long userId);
 
     long countByUserIdAndIsCompletedTrueAndActiveTrue(Long userId);
-
-    long countByUserIdAndActiveTrue(Long userId);
 }

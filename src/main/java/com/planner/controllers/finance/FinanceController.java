@@ -1,6 +1,7 @@
 package com.planner.controllers.finance;
 
 import com.planner.dtos.APIResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.finance.Budget;
 import com.planner.entities.finance.Transaction;
@@ -19,22 +20,24 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/finance")
 @RequiredArgsConstructor
-@Tag(name = "Finance", description = "Financial transaction and budget management")
+@Tag(name = "Finance", description = "Finance and budget management")
 public class FinanceController {
 
     private final FinanceService financeService;
 
     @PostMapping("/transactions")
-    @Operation(summary = "Create a new transaction")
+    @Operation(summary = "Create a transaction")
     public ResponseEntity<APIResponse<Transaction>> createTransaction(@Valid @RequestBody Transaction transaction) {
         ServiceResult<Transaction> result = financeService.createTransaction(transaction);
         return toApiResponse(result, "Transaction created successfully");
     }
 
     @GetMapping("/transactions")
-    @Operation(summary = "Get all transactions for the current user")
-    public ResponseEntity<APIResponse<List<Transaction>>> getAllTransactions() {
-        ServiceResult<List<Transaction>> result = financeService.getAllTransactions();
+    @Operation(summary = "Get all transactions with pagination")
+    public ResponseEntity<APIResponse<Pagination<Transaction>>> getAllTransactions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<Transaction>> result = financeService.getAllTransactions(page, size);
         return toApiResponse(result, "Transactions retrieved successfully");
     }
 
@@ -54,17 +57,22 @@ public class FinanceController {
     }
 
     @GetMapping("/transactions/type/{type}")
-    @Operation(summary = "Get transactions by type")
-    public ResponseEntity<APIResponse<List<Transaction>>> getTransactionsByType(@PathVariable TransactionType type) {
-        ServiceResult<List<Transaction>> result = financeService.getTransactionsByType(type);
+    @Operation(summary = "Get transactions by type with pagination")
+    public ResponseEntity<APIResponse<Pagination<Transaction>>> getByType(
+            @PathVariable TransactionType type,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<Transaction>> result = financeService.getTransactionsByType(type, page, size);
         return toApiResponse(result, "Transactions retrieved successfully");
     }
 
     @GetMapping("/transactions/date-range")
-    @Operation(summary = "Get transactions within a date range")
-    public ResponseEntity<APIResponse<List<Transaction>>> getTransactionsByDateRange(
-            @RequestParam Long startDate, @RequestParam Long endDate) {
-        ServiceResult<List<Transaction>> result = financeService.getTransactionsByDateRange(startDate, endDate);
+    @Operation(summary = "Get transactions by date range with pagination")
+    public ResponseEntity<APIResponse<Pagination<Transaction>>> getByDateRange(
+            @RequestParam Long startDate, @RequestParam Long endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<Transaction>> result = financeService.getTransactionsByDateRange(startDate, endDate, page, size);
         return toApiResponse(result, "Transactions retrieved successfully");
     }
 
@@ -76,21 +84,21 @@ public class FinanceController {
     }
 
     @GetMapping("/transactions/unsettled")
-    @Operation(summary = "Get all unsettled debt transactions")
+    @Operation(summary = "Get unsettled debts")
     public ResponseEntity<APIResponse<List<Transaction>>> getUnsettledDebts() {
         ServiceResult<List<Transaction>> result = financeService.getUnsettledDebts();
         return toApiResponse(result, "Unsettled debts retrieved successfully");
     }
 
     @PostMapping("/budgets")
-    @Operation(summary = "Create a new budget")
+    @Operation(summary = "Create a budget")
     public ResponseEntity<APIResponse<Budget>> createBudget(@Valid @RequestBody Budget budget) {
         ServiceResult<Budget> result = financeService.createBudget(budget);
         return toApiResponse(result, "Budget created successfully");
     }
 
     @GetMapping("/budgets")
-    @Operation(summary = "Get all budgets for the current user")
+    @Operation(summary = "Get all budgets")
     public ResponseEntity<APIResponse<List<Budget>>> getAllBudgets() {
         ServiceResult<List<Budget>> result = financeService.getAllBudgets();
         return toApiResponse(result, "Budgets retrieved successfully");
@@ -112,10 +120,10 @@ public class FinanceController {
     }
 
     @GetMapping("/stats")
-    @Operation(summary = "Get financial statistics")
+    @Operation(summary = "Get finance statistics")
     public ResponseEntity<APIResponse<Map<String, Object>>> getStats() {
         ServiceResult<Map<String, Object>> result = financeService.getFinanceStats();
-        return toApiResponse(result, "Financial stats retrieved successfully");
+        return toApiResponse(result, "Finance stats retrieved successfully");
     }
 
     private <T> ResponseEntity<APIResponse<T>> toApiResponse(ServiceResult<T> result, String message) {

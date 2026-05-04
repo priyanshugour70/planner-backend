@@ -1,6 +1,8 @@
 package com.planner.repositories.note;
 
 import com.planner.entities.note.Note;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,16 +14,19 @@ import java.util.Optional;
 @Repository
 public interface NoteRepository extends JpaRepository<Note, Long> {
 
-    List<Note> findByUserIdAndActiveTrueOrderByIsPinnedDescUpdatedAtDesc(Long userId);
+    Page<Note> findByUserIdAndActiveTrueOrderByIsPinnedDescUpdatedAtDesc(Long userId, Pageable pageable);
 
-    Optional<Note> findByUuidAndActiveTrue(String uuid);
+    List<Note> findByUserIdAndActiveTrueOrderByIsPinnedDescUpdatedAtDesc(Long userId);
 
     Optional<Note> findByUuidAndUserIdAndActiveTrue(String uuid, Long userId);
 
-    @Query("SELECT n FROM Note n WHERE n.userId = :userId AND n.isPinned = true AND n.active = true ORDER BY n.updatedAt DESC")
+    @Query("SELECT n FROM Note n WHERE n.userId = :userId AND n.active = true AND n.isPinned = true ORDER BY n.updatedAt DESC")
     List<Note> findPinnedNotes(@Param("userId") Long userId);
 
-    @Query("SELECT n FROM Note n WHERE n.userId = :userId AND n.category = :category AND n.active = true")
+    @Query("SELECT n FROM Note n WHERE n.userId = :userId AND n.active = true AND n.category = :category ORDER BY n.updatedAt DESC")
+    Page<Note> findByCategory(@Param("userId") Long userId, @Param("category") String category, Pageable pageable);
+
+    @Query("SELECT n FROM Note n WHERE n.userId = :userId AND n.active = true AND n.category = :category ORDER BY n.updatedAt DESC")
     List<Note> findByCategory(@Param("userId") Long userId, @Param("category") String category);
 
     long countByUserIdAndActiveTrue(Long userId);

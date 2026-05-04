@@ -1,6 +1,7 @@
 package com.planner.controllers.goal;
 
 import com.planner.dtos.APIResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.goal.Goal;
 import com.planner.entities.goal.Milestone;
@@ -31,9 +32,11 @@ public class GoalController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all goals for the current user")
-    public ResponseEntity<APIResponse<List<Goal>>> getAll() {
-        ServiceResult<List<Goal>> result = goalService.getAllGoals();
+    @Operation(summary = "Get all goals with pagination")
+    public ResponseEntity<APIResponse<Pagination<Goal>>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<Goal>> result = goalService.getAllGoals(page, size);
         return toApiResponse(result, "Goals retrieved successfully");
     }
 

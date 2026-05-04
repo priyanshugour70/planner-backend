@@ -1,6 +1,7 @@
 package com.planner.service.finance.impl;
 
 import com.planner.dtos.ErrorResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.finance.Budget;
 import com.planner.entities.finance.FinanceLog;
@@ -13,6 +14,8 @@ import com.planner.security.SecurityUtils;
 import com.planner.service.finance.FinanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,32 +109,35 @@ public class FinanceServiceImpl implements FinanceService {
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<Transaction>> getAllTransactions() {
+    public ServiceResult<Pagination<Transaction>> getAllTransactions(int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching all transactions for user: {}", userId);
+        log.debug("Fetching all transactions for user: {} page: {} size: {}", userId, page, size);
 
-        List<Transaction> transactions = transactionRepository.findByUserIdAndActiveTrueOrderByDateDesc(userId);
-        return ServiceResult.ok(transactions);
+        Page<Transaction> txPage = transactionRepository.findByUserIdAndActiveTrueOrderByDateDesc(userId, PageRequest.of(page, size));
+        Pagination<Transaction> pagination = Pagination.of(txPage.getContent(), page, size, txPage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<Transaction>> getTransactionsByType(TransactionType type) {
+    public ServiceResult<Pagination<Transaction>> getTransactionsByType(TransactionType type, int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching transactions by type: {} for user: {}", type, userId);
+        log.debug("Fetching transactions by type: {} for user: {} page: {} size: {}", type, userId, page, size);
 
-        List<Transaction> transactions = transactionRepository.findByType(userId, type);
-        return ServiceResult.ok(transactions);
+        Page<Transaction> txPage = transactionRepository.findByType(userId, type, PageRequest.of(page, size));
+        Pagination<Transaction> pagination = Pagination.of(txPage.getContent(), page, size, txPage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<Transaction>> getTransactionsByDateRange(Long startDate, Long endDate) {
+    public ServiceResult<Pagination<Transaction>> getTransactionsByDateRange(Long startDate, Long endDate, int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching transactions by date range [{} - {}] for user: {}", startDate, endDate, userId);
+        log.debug("Fetching transactions by date range [{} - {}] for user: {} page: {} size: {}", startDate, endDate, userId, page, size);
 
-        List<Transaction> transactions = transactionRepository.findByDateRange(userId, startDate, endDate);
-        return ServiceResult.ok(transactions);
+        Page<Transaction> txPage = transactionRepository.findByDateRange(userId, startDate, endDate, PageRequest.of(page, size));
+        Pagination<Transaction> pagination = Pagination.of(txPage.getContent(), page, size, txPage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 
     @Override

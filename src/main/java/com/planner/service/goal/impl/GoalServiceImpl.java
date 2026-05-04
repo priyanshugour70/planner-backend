@@ -1,6 +1,7 @@
 package com.planner.service.goal.impl;
 
 import com.planner.dtos.ErrorResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.goal.Goal;
 import com.planner.entities.goal.Milestone;
@@ -11,6 +12,8 @@ import com.planner.security.SecurityUtils;
 import com.planner.service.goal.GoalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,12 +115,13 @@ public class GoalServiceImpl implements GoalService {
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<Goal>> getAllGoals() {
+    public ServiceResult<Pagination<Goal>> getAllGoals(int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching all goals for user: {}", userId);
+        log.debug("Fetching all goals for user: {} page: {} size: {}", userId, page, size);
 
-        List<Goal> goals = goalRepository.findByUserIdAndActiveTrueOrderByNumberAsc(userId);
-        return ServiceResult.ok(goals);
+        Page<Goal> goalPage = goalRepository.findByUserIdAndActiveTrueOrderByNumberAsc(userId, PageRequest.of(page, size));
+        Pagination<Goal> pagination = Pagination.of(goalPage.getContent(), page, size, goalPage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 
     @Override

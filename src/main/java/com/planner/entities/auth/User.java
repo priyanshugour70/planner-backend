@@ -50,6 +50,12 @@ public class User extends BaseEntity {
     @Column(name = "is_onboarding_complete")
     private Boolean isOnboardingComplete = false;
 
+    @Column(name = "is_guest")
+    private Boolean isGuest = false;
+
+    @Column(name = "guest_device_id")
+    private String guestDeviceId;
+
     @Column(name = "device_id")
     private String deviceId;
 

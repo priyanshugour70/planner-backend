@@ -1,6 +1,7 @@
 package com.planner.controllers.reminder;
 
 import com.planner.dtos.APIResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.reminder.Reminder;
 import com.planner.service.reminder.ReminderService;
@@ -22,16 +23,18 @@ public class ReminderController {
     private final ReminderService reminderService;
 
     @PostMapping
-    @Operation(summary = "Create a new reminder")
+    @Operation(summary = "Create a reminder")
     public ResponseEntity<APIResponse<Reminder>> create(@Valid @RequestBody Reminder reminder) {
         ServiceResult<Reminder> result = reminderService.createReminder(reminder);
         return toApiResponse(result, "Reminder created successfully");
     }
 
     @GetMapping
-    @Operation(summary = "Get all reminders")
-    public ResponseEntity<APIResponse<List<Reminder>>> getAll() {
-        ServiceResult<List<Reminder>> result = reminderService.getAllReminders();
+    @Operation(summary = "Get all reminders with pagination")
+    public ResponseEntity<APIResponse<Pagination<Reminder>>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<Reminder>> result = reminderService.getAllReminders(page, size);
         return toApiResponse(result, "Reminders retrieved successfully");
     }
 
@@ -44,8 +47,7 @@ public class ReminderController {
 
     @PutMapping("/{uuid}")
     @Operation(summary = "Update a reminder")
-    public ResponseEntity<APIResponse<Reminder>> update(
-            @PathVariable String uuid, @Valid @RequestBody Reminder reminder) {
+    public ResponseEntity<APIResponse<Reminder>> update(@PathVariable String uuid, @Valid @RequestBody Reminder reminder) {
         ServiceResult<Reminder> result = reminderService.updateReminder(uuid, reminder);
         return toApiResponse(result, "Reminder updated successfully");
     }
@@ -58,7 +60,7 @@ public class ReminderController {
     }
 
     @GetMapping("/active")
-    @Operation(summary = "Get all active reminders")
+    @Operation(summary = "Get active reminders")
     public ResponseEntity<APIResponse<List<Reminder>>> getActive() {
         ServiceResult<List<Reminder>> result = reminderService.getActiveReminders();
         return toApiResponse(result, "Active reminders retrieved successfully");
@@ -68,7 +70,7 @@ public class ReminderController {
     @Operation(summary = "Mark a reminder as completed")
     public ResponseEntity<APIResponse<Reminder>> complete(@PathVariable String uuid) {
         ServiceResult<Reminder> result = reminderService.completeReminder(uuid);
-        return toApiResponse(result, "Reminder marked as completed");
+        return toApiResponse(result, "Reminder completed successfully");
     }
 
     private <T> ResponseEntity<APIResponse<T>> toApiResponse(ServiceResult<T> result, String message) {

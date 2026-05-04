@@ -5,5 +5,15 @@ public enum JournalMood {
     GOOD,
     NEUTRAL,
     BAD,
-    TERRIBLE
+    TERRIBLE,
+    HAPPY,
+    SAD,
+    ANXIOUS,
+    CALM,
+    ENERGETIC,
+    TIRED,
+    GRATEFUL,
+    INSPIRED,
+    FRUSTRATED,
+    LOVED
 }

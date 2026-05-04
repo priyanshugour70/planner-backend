@@ -1,5 +1,6 @@
 package com.planner.service.reminder;
 
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.reminder.Reminder;
 
@@ -15,7 +16,7 @@ public interface ReminderService {
 
     ServiceResult<Reminder> getReminderByUuid(String uuid);
 
-    ServiceResult<List<Reminder>> getAllReminders();
+    ServiceResult<Pagination<Reminder>> getAllReminders(int page, int size);
 
     ServiceResult<List<Reminder>> getActiveReminders();
 

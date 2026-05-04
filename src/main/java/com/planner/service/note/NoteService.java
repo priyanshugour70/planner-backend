@@ -1,5 +1,6 @@
 package com.planner.service.note;
 
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.note.Note;
 
@@ -15,9 +16,9 @@ public interface NoteService {
 
     ServiceResult<Note> getNoteByUuid(String uuid);
 
-    ServiceResult<List<Note>> getAllNotes();
+    ServiceResult<Pagination<Note>> getAllNotes(int page, int size);
 
     ServiceResult<List<Note>> getPinnedNotes();
 
-    ServiceResult<List<Note>> getNotesByCategory(String category);
+    ServiceResult<Pagination<Note>> getNotesByCategory(String category, int page, int size);
 }

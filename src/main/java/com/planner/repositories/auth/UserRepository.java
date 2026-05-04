@@ -19,4 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
 
     Optional<User> findByDeviceId(String deviceId);
+
+    @Query("SELECT u FROM User u WHERE u.guestDeviceId = :deviceId AND u.isGuest = true AND u.active = true")
+    Optional<User> findByGuestDeviceIdAndIsGuestTrue(@Param("deviceId") String deviceId);
 }

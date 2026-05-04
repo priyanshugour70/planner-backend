@@ -1,6 +1,7 @@
 package com.planner.controllers.task;
 
 import com.planner.dtos.APIResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.task.Subtask;
 import com.planner.entities.task.Task;
@@ -11,8 +12,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -30,9 +29,11 @@ public class TaskController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all tasks")
-    public ResponseEntity<APIResponse<List<Task>>> getAll() {
-        ServiceResult<List<Task>> result = taskService.getAllTasks();
+    @Operation(summary = "Get all tasks with pagination")
+    public ResponseEntity<APIResponse<Pagination<Task>>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<Task>> result = taskService.getAllTasks(page, size);
         return toApiResponse(result, "Tasks retrieved successfully");
     }
 
@@ -65,16 +66,20 @@ public class TaskController {
     }
 
     @GetMapping("/pending")
-    @Operation(summary = "Get all pending tasks")
-    public ResponseEntity<APIResponse<List<Task>>> getPending() {
-        ServiceResult<List<Task>> result = taskService.getPendingTasks();
+    @Operation(summary = "Get all pending tasks with pagination")
+    public ResponseEntity<APIResponse<Pagination<Task>>> getPending(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<Task>> result = taskService.getPendingTasks(page, size);
         return toApiResponse(result, "Pending tasks retrieved successfully");
     }
 
     @GetMapping("/completed")
-    @Operation(summary = "Get all completed tasks")
-    public ResponseEntity<APIResponse<List<Task>>> getCompleted() {
-        ServiceResult<List<Task>> result = taskService.getCompletedTasks();
+    @Operation(summary = "Get all completed tasks with pagination")
+    public ResponseEntity<APIResponse<Pagination<Task>>> getCompleted(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<Task>> result = taskService.getCompletedTasks(page, size);
         return toApiResponse(result, "Completed tasks retrieved successfully");
     }
 
@@ -95,10 +100,12 @@ public class TaskController {
     }
 
     @GetMapping("/date-range")
-    @Operation(summary = "Get tasks within a date range")
-    public ResponseEntity<APIResponse<List<Task>>> getByDateRange(
-            @RequestParam Long startDate, @RequestParam Long endDate) {
-        ServiceResult<List<Task>> result = taskService.getTasksByDateRange(startDate, endDate);
+    @Operation(summary = "Get tasks within a date range with pagination")
+    public ResponseEntity<APIResponse<Pagination<Task>>> getByDateRange(
+            @RequestParam Long startDate, @RequestParam Long endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        ServiceResult<Pagination<Task>> result = taskService.getTasksByDateRange(startDate, endDate, page, size);
         return toApiResponse(result, "Tasks retrieved successfully");
     }
 

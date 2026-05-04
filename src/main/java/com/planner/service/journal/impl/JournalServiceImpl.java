@@ -1,6 +1,7 @@
 package com.planner.service.journal.impl;
 
 import com.planner.dtos.ErrorResponse;
+import com.planner.dtos.Pagination;
 import com.planner.dtos.ServiceResult;
 import com.planner.entities.journal.JournalEntry;
 import com.planner.enums.JournalMood;
@@ -9,6 +10,8 @@ import com.planner.security.SecurityUtils;
 import com.planner.service.journal.JournalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -108,22 +111,24 @@ public class JournalServiceImpl implements JournalService {
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<JournalEntry>> getAllEntries() {
+    public ServiceResult<Pagination<JournalEntry>> getAllEntries(int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching all journal entries for user: {}", userId);
+        log.debug("Fetching all journal entries for user: {} page: {} size: {}", userId, page, size);
 
-        List<JournalEntry> entries = journalEntryRepository.findByUserIdAndActiveTrueOrderByDateDesc(userId);
-        return ServiceResult.ok(entries);
+        Page<JournalEntry> entryPage = journalEntryRepository.findByUserIdAndActiveTrueOrderByDateDesc(userId, PageRequest.of(page, size));
+        Pagination<JournalEntry> pagination = Pagination.of(entryPage.getContent(), page, size, entryPage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ServiceResult<List<JournalEntry>> getEntriesByDateRange(Long startDate, Long endDate) {
+    public ServiceResult<Pagination<JournalEntry>> getEntriesByDateRange(Long startDate, Long endDate, int page, int size) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.debug("Fetching journal entries by date range [{} - {}] for user: {}", startDate, endDate, userId);
+        log.debug("Fetching journal entries by date range [{} - {}] for user: {} page: {} size: {}", startDate, endDate, userId, page, size);
 
-        List<JournalEntry> entries = journalEntryRepository.findByDateRange(userId, startDate, endDate);
-        return ServiceResult.ok(entries);
+        Page<JournalEntry> entryPage = journalEntryRepository.findByDateRange(userId, startDate, endDate, PageRequest.of(page, size));
+        Pagination<JournalEntry> pagination = Pagination.of(entryPage.getContent(), page, size, entryPage.getTotalElements());
+        return ServiceResult.ok(pagination);
     }
 
     @Override
