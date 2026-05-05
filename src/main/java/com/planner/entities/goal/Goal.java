@@ -7,6 +7,7 @@ import com.planner.enums.GoalPriority;
 import com.planner.enums.GoalStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,8 @@ public class Goal extends BaseEntity {
     private GoalCategory category;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, length = 32)
+    @ColumnDefault("'NOT_STARTED'")
     @Builder.Default
     private GoalStatus status = GoalStatus.NOT_STARTED;
 
