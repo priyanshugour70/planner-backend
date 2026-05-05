@@ -12,3 +12,10 @@ spring:
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  # Align existing Supabase schemas with new Goal/Milestone columns. Hibernate ddl-auto alone
+  # cannot add NOT NULL columns to populated tables without defaults.
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration

@@ -14,6 +14,8 @@ public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
 
     List<Milestone> findByGoalIdAndActiveTrue(Long goalId);
 
+    List<Milestone> findByGoalIdAndActiveTrueOrderByOrderIndexAsc(Long goalId);
+
     Optional<Milestone> findByUuidAndActiveTrue(String uuid);
 
     @Query("SELECT m FROM Milestone m WHERE m.goal.userId = :userId AND m.isCompleted = true AND m.active = true")
@@ -24,4 +26,14 @@ public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
 
     @Query("SELECT COUNT(m) FROM Milestone m WHERE m.goal.id = :goalId AND m.active = true")
     long countByGoalId(@Param("goalId") Long goalId);
+
+    @Query("SELECT COUNT(m) FROM Milestone m WHERE m.goal.userId = :userId AND m.active = true")
+    long countAllByUser(@Param("userId") Long userId);
+
+    @Query("SELECT COUNT(m) FROM Milestone m WHERE m.goal.userId = :userId AND m.isCompleted = true AND m.active = true")
+    long countCompletedByUser(@Param("userId") Long userId);
+
+    @Query("SELECT m FROM Milestone m WHERE m.goal.userId = :userId AND m.active = true " +
+            "AND m.targetDate IS NOT NULL AND m.targetDate < :now AND m.isCompleted = false")
+    List<Milestone> findOverdueMilestonesByUser(@Param("userId") Long userId, @Param("now") Long now);
 }
