@@ -51,7 +51,7 @@ public class Habit extends BaseEntity {
     @Column(name = "unit")
     private String unit;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "habit_frequency", joinColumns = @JoinColumn(name = "habit_id"))
     @Column(name = "day_of_week")
     @Builder.Default

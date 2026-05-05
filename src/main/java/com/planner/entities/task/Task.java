@@ -56,7 +56,7 @@ public class Task extends BaseEntity {
     @Column(name = "linked_reminder_id")
     private String linkedReminderId;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "task_tags", joinColumns = @JoinColumn(name = "task_id"))
     @Column(name = "tag")
     @Builder.Default
@@ -78,7 +78,7 @@ public class Task extends BaseEntity {
     @Column(name = "completed_at")
     private Long completedAt;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @Builder.Default
     private List<Subtask> subtasks = new ArrayList<>();
 }

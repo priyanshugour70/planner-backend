@@ -47,7 +47,7 @@ public class Note extends BaseEntity {
     @Column(name = "linked_reminder_id")
     private String linkedReminderId;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "note_tags", joinColumns = @JoinColumn(name = "note_id"))
     @Column(name = "tag")
     @Builder.Default

@@ -38,43 +38,43 @@ public class JournalEntry extends BaseEntity {
     @Column(name = "mood")
     private JournalMood mood = JournalMood.NEUTRAL;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "journal_tags", joinColumns = @JoinColumn(name = "journal_id"))
     @Column(name = "tag")
     @Builder.Default
     private List<String> tags = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "journal_linked_goals", joinColumns = @JoinColumn(name = "journal_id"))
     @Column(name = "goal_id")
     @Builder.Default
     private List<String> linkedGoalIds = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "journal_linked_tasks", joinColumns = @JoinColumn(name = "journal_id"))
     @Column(name = "task_id")
     @Builder.Default
     private List<String> linkedTaskIds = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "journal_photos", joinColumns = @JoinColumn(name = "journal_id"))
     @Column(name = "photo_url")
     @Builder.Default
     private List<String> photos = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "journal_gratitude", joinColumns = @JoinColumn(name = "journal_id"))
     @Column(name = "item")
     @Builder.Default
     private List<String> gratitude = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "journal_achievements", joinColumns = @JoinColumn(name = "journal_id"))
     @Column(name = "item")
     @Builder.Default
     private List<String> achievements = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "journal_challenges", joinColumns = @JoinColumn(name = "journal_id"))
     @Column(name = "item")
     @Builder.Default

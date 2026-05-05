@@ -50,7 +50,7 @@ public class Goal extends BaseEntity {
     @Column(name = "target_date")
     private Long targetDate;
 
-    @OneToMany(mappedBy = "goal", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "goal", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @Builder.Default
     private List<Milestone> milestones = new ArrayList<>();
 }
